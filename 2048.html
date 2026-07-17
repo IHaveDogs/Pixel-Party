@@ -110,11 +110,6 @@
         <aside class="auth-panel scores-panel">
           <h2>Run Archive</h2>
           <p>Player: <strong id="player-name">—</strong></p>
-          <form id="profile-form-2048" class="game-profile-form">
-            <label for="profile-username-2048">Player Name</label>
-            <input id="profile-username-2048" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
-            <button class="ghost-button" type="submit">Save &amp; Start New Game</button>
-          </form>
           <ol id="scores-2048" class="game-score-list"></ol>
           <p id="empty-scores-2048" class="hint">No completed games yet.</p>
         </aside>
@@ -122,14 +117,14 @@
     </main>
   </div>
 
-  <div id="player-login-2048" class="player-login">
-    <form id="player-login-form-2048" class="player-login-card">
-      <p class="login-kicker">IDENTIFICATION REQUIRED</p>
-      <h2>ENTER 2048</h2>
-      <p>Choose a player name. Every completed game is saved to this device.</p>
-      <label for="username-2048">PLAYER NAME</label>
-      <input id="username-2048" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
-      <button class="pixel-button" type="submit">START GAME ↗</button>
+  <div id="login" class="overlay">
+    <form id="login-form" class="login-card">
+      <div class="cube-mark"><span></span><span></span><span></span></div>
+      <p class="eyebrow">IDENTIFICATION REQUIRED</p><h2>ENTER 2048</h2>
+      <p>Choose a pilot name. Every completed run is saved to this device.</p>
+      <label for="username">PILOT NAME</label>
+      <input id="username" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+      <button type="submit">INITIALIZE <span>↗</span></button>
     </form>
   </div>
 

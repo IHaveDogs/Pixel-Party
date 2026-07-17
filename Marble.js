@@ -55,14 +55,14 @@ const playAgainBtn = document.getElementById("playAgainBtn");
 const buyBombBtn = document.getElementById("buyBombBtn");
 const buyMillionBtn = document.getElementById("buyMillionBtn");
 const bombStatus = document.getElementById("bombStatus");
+const marbleShopCoins = document.getElementById("marbleShopCoins");
+const marbleShopMessage = document.getElementById("marbleShopMessage");
 const playerNameText = document.getElementById("playerName");
-const playerLogin = document.getElementById("playerLogin");
-const playerLoginForm = document.getElementById("playerLoginForm");
-const marbleUsername = document.getElementById("marbleUsername");
+const playerLogin = document.getElementById("login");
+const playerLoginForm = document.getElementById("login-form");
+const marbleUsername = document.getElementById("username");
 const marbleScores = document.getElementById("marbleScores");
 const emptyMarbleScores = document.getElementById("emptyMarbleScores");
-const marbleProfileForm = document.getElementById("marbleProfileForm");
-const marbleProfileUsername = document.getElementById("marbleProfileUsername");
 
 if (window.PP) {
     PP.startCoinTimer({ rate: 2, isActive: () => !gameIsOver && !isPaused });
@@ -122,7 +122,6 @@ function startForPlayer(name) {
     if (window.PP) PP.setUsername(player);
     playerNameText.textContent = player.toUpperCase();
     marbleUsername.value = player;
-    marbleProfileUsername.value = player;
     playerLogin.classList.add("hidden");
     resetGame();
 }
@@ -164,6 +163,7 @@ function updateHud() {
 function updateBombShop() {
     if (!buyBombBtn || !bombStatus) return;
     const coins = window.PP ? PP.coins() : 0;
+    if (marbleShopCoins) marbleShopCoins.textContent = String(coins);
     bombStatus.textContent = bombArmed ? "Ready for next volley" : "Empty";
     buyBombBtn.disabled = bombArmed;
     buyBombBtn.textContent = bombArmed ? "💣 Bomb Ready!" : `💣 Blast Pass — ${BOMB_COST} Coins`;
@@ -174,20 +174,36 @@ function updateBombShop() {
 }
 
 function buyBomb() {
-    if (bombArmed || !window.PP) return;
+    if (bombArmed) {
+        marbleShopMessage.textContent = "A bomb is already armed for your next volley.";
+        return;
+    }
+    if (!window.PP) {
+        marbleShopMessage.textContent = "The coin system is unavailable. Reload the game and try again.";
+        return;
+    }
     if (PP.coins() < BOMB_COST) {
-        setStatus(`You need ${BOMB_COST - PP.coins()} more coins for a bomb.`);
+        const message = `You need ${BOMB_COST - PP.coins()} more coins for a bomb.`;
+        setStatus(message);
+        marbleShopMessage.textContent = message;
         return;
     }
     PP.setCoins(PP.coins() - BOMB_COST);
     bombArmed = true;
     updateBombShop();
     setStatus("Bomb armed! It will fire first in your next volley.");
+    marbleShopMessage.textContent = "Bomb purchased and armed for your next volley!";
 }
 
 function buyMillionMarble() {
-    if (!window.PP || PP.coins() < MILLION_MARBLE_COST) {
-        if (window.PP) setStatus(`You need ${MILLION_MARBLE_COST - PP.coins()} more coins for a Million Marble.`);
+    if (!window.PP) {
+        marbleShopMessage.textContent = "The coin system is unavailable. Reload the game and try again.";
+        return;
+    }
+    if (PP.coins() < MILLION_MARBLE_COST) {
+        const message = `You need ${MILLION_MARBLE_COST - PP.coins()} more coins for a Million Marble.`;
+        setStatus(message);
+        marbleShopMessage.textContent = message;
         return;
     }
     PP.setCoins(PP.coins() - MILLION_MARBLE_COST);
@@ -195,6 +211,7 @@ function buyMillionMarble() {
     mergeAmmo();
     updateBombShop();
     setStatus("Million Marble added to the front of your next volley!");
+    marbleShopMessage.textContent = "1M marble purchased and placed first in your next volley!";
 }
 
 function saveBestScore() {
@@ -884,13 +901,6 @@ if (playerLoginForm) {
         startForPlayer(marbleUsername.value);
     });
 }
-if (marbleProfileForm) {
-    marbleProfileForm.addEventListener("submit", event => {
-        event.preventDefault();
-        startForPlayer(marbleProfileUsername.value);
-    });
-}
-
 document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
         setPaused(true);

@@ -16,11 +16,9 @@ const newBtnMobile = document.getElementById("new-game-btn-mobile");
 const playerNameEl = document.getElementById("player-name");
 const scores2048El = document.getElementById("scores-2048");
 const emptyScores2048El = document.getElementById("empty-scores-2048");
-const playerLogin2048 = document.getElementById("player-login-2048");
-const playerLoginForm2048 = document.getElementById("player-login-form-2048");
-const username2048 = document.getElementById("username-2048");
-const profileForm2048 = document.getElementById("profile-form-2048");
-const profileUsername2048 = document.getElementById("profile-username-2048");
+const playerLogin2048 = document.getElementById("login");
+const playerLoginForm2048 = document.getElementById("login-form");
+const username2048 = document.getElementById("username");
 
 if (window.PP) {
     PP.startCoinTimer({ rate: 1, isActive: () => !gameOver });
@@ -79,7 +77,6 @@ function startForPlayer(name) {
     if (window.PP) PP.setUsername(player);
     playerNameEl.textContent = player.toUpperCase();
     username2048.value = player;
-    profileUsername2048.value = player;
     playerLogin2048.classList.add("hidden");
     init();
 }
@@ -383,13 +380,6 @@ if (playerLoginForm2048) {
         startForPlayer(username2048.value);
     });
 }
-if (profileForm2048) {
-    profileForm2048.addEventListener("submit", event => {
-        event.preventDefault();
-        startForPlayer(profileUsername2048.value);
-    });
-}
-
 // Start
 
 init();

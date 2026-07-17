@@ -33,11 +33,12 @@
             </div>
 
             <div class="bomb-shop" aria-label="Marble shop">
-                <p><strong>Bomb slot:</strong> <span id="bombStatus">Empty</span></p>
+                <p><strong>Coins:</strong> <span id="marbleShopCoins">0</span> · <strong>Bomb slot:</strong> <span id="bombStatus">Empty</span></p>
                 <div class="marble-shop-buttons">
                     <button id="buyBombBtn" class="pixel-button" type="button">💣 Blast Pass — 15 Coins</button>
                     <button id="buyMillionBtn" class="pixel-button" type="button">🚀 Million Marble — 50 Coins</button>
                 </div>
+                <p id="marbleShopMessage" class="marble-shop-message" role="status">Choose an upgrade for your next volley.</p>
             </div>
 
             <div class="game-layout">
@@ -54,11 +55,6 @@
                 <aside class="scores-panel">
                     <h2>Run Archive</h2>
                     <p>Player: <strong id="playerName">—</strong></p>
-                    <form id="marbleProfileForm" class="game-profile-form">
-                        <label for="marbleProfileUsername">Player Name</label>
-                        <input id="marbleProfileUsername" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
-                        <button class="ghost-button" type="submit">Save &amp; Start New Run</button>
-                    </form>
                     <p id="statusText">Ready to launch.</p>
                     <ol id="marbleScores" class="game-score-list"></ol>
                     <p id="emptyMarbleScores" class="hint">No completed runs yet.</p>
@@ -68,14 +64,14 @@
         </main>
     </div>
 
-    <div id="playerLogin" class="player-login">
-        <form id="playerLoginForm" class="player-login-card">
-            <p class="login-kicker">IDENTIFICATION REQUIRED</p>
-            <h2>ENTER MARBLE BOSS</h2>
-            <p>Choose a player name. Every completed run is saved to this device.</p>
-            <label for="marbleUsername">PLAYER NAME</label>
-            <input id="marbleUsername" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
-            <button class="pixel-button" type="submit">START RUN ↗</button>
+    <div id="login" class="overlay">
+        <form id="login-form" class="login-card">
+            <div class="cube-mark"><span></span><span></span><span></span></div>
+            <p class="eyebrow">IDENTIFICATION REQUIRED</p><h2>ENTER MARBLE BOSS</h2>
+            <p>Choose a pilot name. Every completed run is saved to this device.</p>
+            <label for="username">PILOT NAME</label>
+            <input id="username" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+            <button type="submit">INITIALIZE <span>↗</span></button>
         </form>
     </div>
 
