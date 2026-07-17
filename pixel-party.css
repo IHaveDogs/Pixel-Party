@@ -392,6 +392,8 @@ input {
 
 .game-card {
   display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
   gap: 0;
   border-radius: 22px;
   overflow: hidden;
@@ -428,8 +430,12 @@ input {
 
 .game-body {
   display: grid;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
   gap: 14px;
   padding: 18px;
+  background: var(--pp-panel);
 }
 
 .game-body h3 {
@@ -437,16 +443,19 @@ input {
   font-size: 24px;
   line-height: 1;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .game-body p {
   margin: 0;
   color: #a8b8ad;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .card-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -725,10 +734,20 @@ input {
   opacity: 0.42;
 }
 
+@media (max-width: 1100px) {
+  .lobby-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-header,
+  .site-actions {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 960px) {
   .hero,
   .game-layout,
-  .lobby-grid,
   .shop-grid {
     grid-template-columns: 1fr;
   }
@@ -750,6 +769,12 @@ input {
   }
 }
 
+@media (max-width: 720px) {
+  .lobby-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .site-frame {
     width: min(100vw - 18px, 100vw);
@@ -766,6 +791,12 @@ input {
     height: 180px;
   }
 
+  .hero h1 {
+    font-size: clamp(32px, 11vw, 48px);
+    line-height: 0.98;
+    overflow-wrap: anywhere;
+  }
+
   .game-body h3 {
     font-size: 20px;
   }
@@ -775,5 +806,22 @@ input {
     bottom: 9px;
     min-width: 102px;
     padding: 8px 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .pp-auth-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pp-auth-field input,
+  .pp-auth-bar button,
+  .coin-shop-button {
+    width: 100%;
+  }
+
+  .card-count {
+    white-space: normal;
   }
 }
