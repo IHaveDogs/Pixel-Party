@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pixel Party</title>
+  <link rel="stylesheet" href="pixel-party.css" />
+</head>
+<body>
+  <div class="site-frame">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Pixel Party home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <small>Quick pixel games</small>
+          <strong>Pixel Party</strong>
+        </span>
+      </a>
+      <div class="site-actions">
+        <a class="back-link" href="3dSnakeGame.html">Jump in a game</a>
+        <div id="home-auth"></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-panel pixel-frame">
+        <p class="eyebrow">Browser arcade for quick sessions</p>
+        <h1>Choose a game, play for a minute, come back later.</h1>
+        <p class="hero-copy">
+          Pixel Party keeps the vibe simple: a lobby full of fast games, big touch targets, and saveable progress if a player wants a name attached to their scores.
+        </p>
+        <div class="hero-meta">
+          <span class="chip">Touch friendly</span>
+          <span class="chip">Arrow keys supported</span>
+          <span class="chip">Username saves on this device</span>
+        </div>
+      </div>
+
+      <aside class="lobby-card pixel-frame">
+        <h2>Start fast</h2>
+        <p>Pick a card and the game fills the tab. Use the back link in each game to return to the lobby anytime.</p>
+      </aside>
+    </section>
+
+    <main class="lobby-grid" aria-label="Game lobby">
+      <a class="game-card pixel-frame" href="3dSnakeGame.html">
+        <div class="game-thumb" aria-hidden="true">
+          <svg viewBox="0 0 240 160" role="img" aria-label="3D Snake thumbnail">
+            <rect width="240" height="160" rx="18" fill="#0d1511" />
+            <g transform="translate(26,24)">
+              <rect x="0" y="48" width="28" height="28" fill="#b9ff3e" />
+              <rect x="30" y="36" width="28" height="28" fill="#9be322" />
+              <rect x="60" y="28" width="28" height="28" fill="#83c81c" />
+              <rect x="90" y="20" width="28" height="28" fill="#68a816" />
+              <rect x="120" y="30" width="28" height="28" fill="#9be322" />
+              <rect x="150" y="42" width="28" height="28" fill="#b9ff3e" />
+              <circle cx="184" cy="76" r="14" fill="#ff564d" />
+              <rect x="184" y="70" width="6" height="16" fill="#ffe4c1" />
+            </g>
+          </svg>
+        </div>
+        <div class="game-body">
+          <div class="card-meta">
+            <span class="badge">Popular</span>
+            <span class="card-count">128K players</span>
+          </div>
+          <h3>3D Snake</h3>
+          <p>Navigate the cube, collect apples, and keep the run alive with keyboard or touch controls.</p>
+          <span class="play-cta">Play now</span>
+        </div>
+      </a>
+
+      <a class="game-card pixel-frame" href="MarbleShoot.html">
+        <div class="game-thumb" aria-hidden="true">
+          <svg viewBox="0 0 240 160" role="img" aria-label="Marble Shoot thumbnail">
+            <rect width="240" height="160" rx="18" fill="#0d1511" />
+            <g transform="translate(24,20)">
+              <rect x="8" y="72" width="32" height="32" fill="#3e4f41" />
+              <rect x="44" y="56" width="32" height="48" fill="#55695b" />
+              <rect x="80" y="40" width="32" height="64" fill="#6a7d6f" />
+              <rect x="116" y="56" width="32" height="48" fill="#55695b" />
+              <rect x="152" y="72" width="32" height="32" fill="#3e4f41" />
+              <circle cx="56" cy="26" r="14" fill="#ff7a59" />
+              <circle cx="94" cy="18" r="16" fill="#55e4ff" />
+              <circle cx="138" cy="30" r="13" fill="#b9ff3e" />
+              <circle cx="182" cy="22" r="15" fill="#ffd95c" />
+            </g>
+          </svg>
+        </div>
+        <div class="game-body">
+          <div class="card-meta">
+            <span class="badge">New</span>
+            <span class="card-count">86K players</span>
+          </div>
+          <h3>Marble Boss</h3>
+          <p>Launch marbles, beat waves of blocks, and grow your value with touch or arrow key aim.</p>
+          <span class="play-cta">Play now</span>
+        </div>
+      </a>
+
+      <a class="game-card pixel-frame" href="2048.html">
+        <div class="game-thumb" aria-hidden="true">
+          <svg viewBox="0 0 240 160" role="img" aria-label="2048 thumbnail">
+            <rect width="240" height="160" rx="18" fill="#0d1511" />
+            <g transform="translate(24,18)">
+              <rect x="0" y="0" width="46" height="46" fill="#eee4da" />
+              <rect x="52" y="0" width="46" height="46" fill="#f2b179" />
+              <rect x="104" y="0" width="46" height="46" fill="#edcf72" />
+              <rect x="156" y="0" width="46" height="46" fill="#f59563" />
+              <rect x="0" y="52" width="46" height="46" fill="#f67c5f" />
+              <rect x="52" y="52" width="46" height="46" fill="#edc850" />
+              <rect x="104" y="52" width="46" height="46" fill="#edc22e" />
+              <rect x="156" y="52" width="46" height="46" fill="#c9b37c" />
+              <rect x="52" y="104" width="46" height="46" fill="#ebe4d6" />
+              <rect x="104" y="104" width="46" height="46" fill="#d7c2a0" />
+            </g>
+          </svg>
+        </div>
+        <div class="game-body">
+          <div class="card-meta">
+            <span class="badge">Classic</span>
+            <span class="card-count">210K players</span>
+          </div>
+          <h3>2048</h3>
+          <p>Slide matching blocks together until the numbers stack into something huge.</p>
+          <span class="play-cta">Play now</span>
+        </div>
+      </a>
+    </main>
+
+    <div class="shop-callout">
+      <a class="coin-shop-button" href="CoinShop.html">Go to Coin Shop</a>
+    </div>
+  </div>
+
+  <script src="pixel-party.js"></script>
+  <script>
+    PP.mountAuthBar(document.getElementById("home-auth"), {
+      label: "Username",
+      note: "Save your best scores and keep your name across games."
+    });
+  </script>
+</body>
+</html>

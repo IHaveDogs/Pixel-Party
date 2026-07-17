@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coin Shop — Pixel Party</title>
+  <link rel="stylesheet" href="pixel-party.css" />
+</head>
+<body>
+  <div class="site-frame">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Pixel Party home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span><small>Spend your play coins</small><strong>Coin Shop</strong></span>
+      </a>
+      <a class="back-link" href="index.html">Back to lobby</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-panel pixel-frame">
+        <p class="eyebrow">Pixel Party rewards</p>
+        <h1>Pick your arcade style.</h1>
+        <p class="hero-copy">Earn 1 coin each minute in Snake or 2048, and 2 coins each minute in Marble Boss. Pixel Text costs 100 coins, Golden Arcade costs 70, and color themes cost 60.</p>
+        <p id="sale-status" class="sale-status" aria-live="polite"></p>
+        <p id="shop-message" class="shop-message" aria-live="polite"></p>
+      </div>
+      <aside class="lobby-card pixel-frame">
+        <h2>Your themes</h2>
+        <p>Buy a theme once, then switch back to it whenever you want. Your choice changes every Pixel Party page.</p>
+      </aside>
+    </section>
+
+    <main id="theme-grid" class="shop-grid" aria-label="Theme shop"></main>
+  </div>
+
+  <button id="test-coins" class="test-coins-button" type="button" aria-label="Add 500 test coins" title="Add 500 test coins">+</button>
+
+  <script src="pixel-party.js"></script>
+  <script src="CoinShop.js"></script>
+</body>
+</html>

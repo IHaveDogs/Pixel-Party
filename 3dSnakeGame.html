@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D Snake — Pixel Party</title>
+  <link rel="stylesheet" href="pixel-party.css" />
+  <link rel="stylesheet" href="SnakeGamestyles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="game-card">
+      <header>
+        <div>
+          <a class="back-link" href="index.html">Back to lobby</a>
+          <p class="eyebrow">PIXEL PARTY // 06</p>
+          <h1>3D SNAKE <span>GAME</span></h1>
+        </div>
+        <div class="hud">
+          <div><span>PLAYER</span><strong id="player">—</strong></div>
+          <div><span>SCORE</span><strong id="score">000</strong></div>
+          <div><span>BEST</span><strong id="best">000</strong></div>
+        </div>
+      </header>
+      <div class="stage-wrap">
+        <canvas id="game" width="900" height="680" aria-label="3D cube snake game"></canvas>
+        <div id="message" class="message hidden">
+          <p id="message-kicker">SYSTEM FAILURE</p><h2 id="message-title">GAME OVER</h2>
+          <p id="message-copy"></p><button id="restart">PLAY AGAIN <span>↗</span></button>
+        </div>
+        <div class="scanlines"></div>
+      </div>
+      <section class="touch-panel" aria-label="Touch movement controls">
+        <p>SWIPE, DRAG, OR TAP TO MOVE</p>
+        <div class="touch-dpad">
+          <button class="touch-up" type="button" data-snake-dir="up" aria-label="Move up">▲</button>
+          <button class="touch-left" type="button" data-snake-dir="left" aria-label="Move left">◀</button>
+          <button class="touch-down" type="button" data-snake-dir="down" aria-label="Move down">▼</button>
+          <button class="touch-right" type="button" data-snake-dir="right" aria-label="Move right">▶</button>
+        </div>
+      </section>
+      <footer>
+        <div class="controls keyboard-controls"><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><span>MOVE</span></div>
+        <div class="controls"><button id="goHome" class="ghost-button" type="button">LOBBY</button></div>
+        <div class="controls"><button id="pause" class="ghost-button" type="button">PAUSE</button></div>
+        <div class="status"><i></i><span id="status">AWAITING PILOT</span></div>
+      </footer>
+    </section>
+    <aside class="scores-card">
+      <div class="scores-title"><span>RUN ARCHIVE</span><span>LOCAL</span></div>
+      <ol id="scores"></ol><p id="empty-scores">No completed runs yet.</p>
+    </aside>
+  </main>
+  <div id="login" class="overlay">
+    <form id="login-form" class="login-card">
+      <div class="cube-mark"><span></span><span></span><span></span></div>
+      <p class="eyebrow">IDENTIFICATION REQUIRED</p><h2>ENTER THE CUBE</h2>
+      <p>Choose a pilot name. Every completed run is saved to this device.</p>
+      <label for="username">PILOT NAME</label>
+      <input id="username" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required />
+      <button type="submit">INITIALIZE <span>↗</span></button>
+    </form>
+  </div>
+  <script src="pixel-party.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marble Boss — Pixel Party</title>
+    <link rel="stylesheet" href="pixel-party.css">
+    <link rel="stylesheet" href="Marble.css">
+</head>
+<body>
+    <div class="site-frame">
+        <header class="site-header">
+            <a class="brand" href="index.html" aria-label="Pixel Party home">
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span>
+                    <small>Quick pixel games</small>
+                    <strong>Pixel Party</strong>
+                </span>
+            </a>
+            <div class="site-actions">
+                <a class="back-link" href="index.html">Back to lobby</a>
+                <div id="auth-mount"></div>
+            </div>
+        </header>
+
+        <main class="game-shell">
+            <div class="game-toolbar">
+                <h1>Marble Boss</h1>
+                <div class="back-row">
+                    <button id="pauseBtn" class="ghost-button" type="button">Pause</button>
+                    <button id="speedBtn" class="ghost-button hold-button" type="button">Speed Up</button>
+                    <button id="resetBtn" class="pixel-button" type="button">Reset</button>
+                </div>
+            </div>
+
+            <div class="game-layout">
+                <section class="stage-wrap pixel-frame">
+                    <canvas id="gameCanvas"></canvas>
+                    <div class="ui">
+                        <span>Score: <b id="score">0</b></span>
+                        <span>Best: <b id="best">0</b></span>
+                        <span>Wave: <b id="wave">1</b></span>
+                    </div>
+                    <p class="hint">Aim with a mouse, drag on touch, or use the arrow keys and spacebar. Beat the block boss waves, then come back from the lobby anytime.</p>
+                </section>
+
+                <aside class="scores-panel">
+                    <h2>Session</h2>
+                    <p id="statusText">Ready to launch.</p>
+                    <p class="hint">Marbles collect, merge, and keep adding up. Your best score saves under your username on this device.</p>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <div id="gameOver">
+        <h2>Level Cleared!</h2>
+        <button id="playAgainBtn" class="pixel-button" type="button">Play Again</button>
+    </div>
+
+    <script src="pixel-party.js"></script>
+    <script src="Marble.js"></script>
+    <script>
+        PP.mountAuthBar(document.getElementById("auth-mount"));
+    </script>
+
+</body>
+</html>

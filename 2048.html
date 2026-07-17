@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>2048 — Pixel Party</title>
+<link rel="stylesheet" href="pixel-party.css" />
+<link rel="stylesheet" href="2048.css" />
+<style>
+  
+  .board-2048{
+    --gap: 8px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-rows:repeat(4,1fr);
+    gap:var(--gap);
+    width:min(340px,88vw);
+    aspect-ratio:1;
+    background:var(--panel-light);
+    padding:var(--gap);
+    touch-action:none;
+  }
+  .cell-bg{
+    background:rgba(244,241,255,0.06);
+  }
+  .tile{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--font-display);
+    font-size:20px;
+    color:var(--bg-deep);
+    animation:pop 110ms ease;
+  }
+  @keyframes pop{ from{ transform:scale(.75); opacity:.5; } to{ transform:scale(1); opacity:1; } }
+  .tile[data-v="2"]{ background:#f4f1ff; }
+  .tile[data-v="4"]{ background:#ffe066; }
+  .tile[data-v="8"]{ background:#ffb84d; color:#2a1600; }
+  .tile[data-v="16"]{ background:#ff8a4d; color:#2a1600; }
+  .tile[data-v="32"]{ background:#ff4d8d; color:#2a0014; }
+  .tile[data-v="64"]{ background:#ff4d4d; color:#2a0000; }
+  .tile[data-v="128"]{ background:#4deeea; font-size:17px; }
+  .tile[data-v="256"]{ background:#4dc9ff; font-size:17px; }
+  .tile[data-v="512"]{ background:#8a6bff; color:#fff; font-size:17px; }
+  .tile[data-v="1024"]{ background:#a8ff60; font-size:14px; }
+  .tile[data-v="2048"]{ background:#fff; box-shadow:0 0 0 3px var(--pink), 0 0 18px var(--pink); font-size:14px; }
+  @media (max-width:480px){
+    .board-2048{ --gap:6px; }
+    .tile{ font-size:15px; }
+    .tile[data-v="128"],.tile[data-v="256"],.tile[data-v="512"]{ font-size:13px; }
+    .tile[data-v="1024"],.tile[data-v="2048"]{ font-size:11px; }
+  }
+  .win-lose-banner{
+    font-family:var(--font-display);
+    font-size:14px;
+    text-align:center;
+    color:var(--yellow);
+    min-height:20px;
+  }
+</style>
+</head>
+<body>
+  <div class="site-frame">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Pixel Party home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <small>Quick pixel games</small>
+          <strong>Pixel Party</strong>
+        </span>
+      </a>
+      <div class="site-actions">
+        <a class="back-link" href="index.html">Back to lobby</a>
+        <div id="auth-mount"></div>
+      </div>
+    </header>
+
+    <main class="game-shell">
+      <div class="game-toolbar">
+        <h1>2048</h1>
+        <div class="back-row">
+          <button class="ghost-button" id="new-game-btn" type="button">New game</button>
+        </div>
+      </div>
+
+      <div class="game-layout">
+        <div class="stage-wrap pixel-frame outline">
+          <div class="score-strip">
+            <div class="stat" id="score-stat">0<span>Score</span></div>
+            <div class="stat" id="best-stat">0<span>Best</span></div>
+          </div>
+
+          <div class="board-2048 pixel-frame" id="board"></div>
+
+          <div class="win-lose-banner" id="banner"></div>
+
+          <div class="controls-row">
+            <button class="pixel-button" id="new-game-btn-mobile" type="button">New game</button>
+          </div>
+
+          <div class="dpad dpad-mobile-only">
+            <button class="up" data-dir="up">▲</button>
+            <button class="left" data-dir="left">◀</button>
+            <button class="right" data-dir="right">▶</button>
+            <button class="down" data-dir="down">▼</button>
+          </div>
+
+          <p class="hint">Arrow keys to slide the blocks or swipe on the board. Matching tiles merge into higher values, and your best score saves by username.</p>
+        </div>
+
+        <aside class="auth-panel">
+          <h2>Profile</h2>
+          <p class="hint">Enter a name once and this device keeps your best 2048 score tied to it.</p>
+          <p class="hint">Use the username box in the top bar, then come back here and keep stacking tiles.</p>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="pixel-party.js"></script>
+  <script src="2048.js"></script>
+  <script>
+    PP.mountAuthBar(document.getElementById('auth-mount'));
+  </script>
+</body>
+</html>
