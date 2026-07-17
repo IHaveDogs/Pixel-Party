@@ -5,6 +5,7 @@ let score = 0;
 let best = 0;
 let gameOver = false;
 let won = false;
+let player = "";
 
 const boardEl = document.getElementById("board");
 const scoreEl = document.getElementById("score-stat");
@@ -12,6 +13,14 @@ const bestEl = document.getElementById("best-stat");
 const bannerEl = document.getElementById("banner");
 const newBtn = document.getElementById("new-game-btn");
 const newBtnMobile = document.getElementById("new-game-btn-mobile");
+const playerNameEl = document.getElementById("player-name");
+const scores2048El = document.getElementById("scores-2048");
+const emptyScores2048El = document.getElementById("empty-scores-2048");
+const playerLogin2048 = document.getElementById("player-login-2048");
+const playerLoginForm2048 = document.getElementById("player-login-form-2048");
+const username2048 = document.getElementById("username-2048");
+const profileForm2048 = document.getElementById("profile-form-2048");
+const profileUsername2048 = document.getElementById("profile-username-2048");
 
 if (window.PP) {
     PP.startCoinTimer({ rate: 1, isActive: () => !gameOver });
@@ -23,6 +32,56 @@ function bestStorageKey() {
     }
 
     return "2048-best:guest";
+}
+
+const RECORDS_2048_KEY = "2048-scores";
+
+function scoreRecords() {
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(RECORDS_2048_KEY)) || []; }
+    catch { saved = []; }
+    const bestByPlayer = new Map();
+    for (const entry of Array.isArray(saved) ? saved : []) {
+        const name = String(entry.name || "PLAYER").trim().slice(0, 16) || "PLAYER";
+        const entryScore = Math.max(0, Number(entry.score) || 0);
+        const key = name.toLowerCase();
+        const current = bestByPlayer.get(key);
+        if (!current || entryScore > current.score) bestByPlayer.set(key, { name, score: entryScore, date: entry.date || "" });
+    }
+    return [...bestByPlayer.values()];
+}
+
+function renderScoreRecords() {
+    const records = scoreRecords().sort((a, b) => b.score - a.score).slice(0, 12);
+    scores2048El.innerHTML = records.map(record => `<li><span>${PP.escapeHtml(record.name)}<small>${PP.escapeHtml(record.date)}</small></span><b>${record.score}</b></li>`).join("");
+    emptyScores2048El.style.display = records.length ? "none" : "block";
+}
+
+function saveCompletedGame() {
+    if (!player) return;
+    const records = scoreRecords();
+    const index = records.findIndex(record => record.name.toLowerCase() === player.toLowerCase());
+    const game = { name: player, score, date: new Date().toLocaleDateString() };
+    if (index < 0) records.push(game);
+    else if (score > records[index].score) records[index] = game;
+    localStorage.setItem(RECORDS_2048_KEY, JSON.stringify(records));
+    renderScoreRecords();
+}
+
+function showPlayerLogin() {
+    username2048.value = player || (window.PP ? PP.currentUsername() : "");
+    playerLogin2048.classList.remove("hidden");
+    username2048.focus();
+}
+
+function startForPlayer(name) {
+    player = String(name || "").trim().slice(0, 16) || "PLAYER";
+    if (window.PP) PP.setUsername(player);
+    playerNameEl.textContent = player.toUpperCase();
+    username2048.value = player;
+    profileUsername2048.value = player;
+    playerLogin2048.classList.add("hidden");
+    init();
 }
 
 function loadBest() {
@@ -238,6 +297,7 @@ function doMove(dir) {
 
     if (!movesAvailable()) {
         gameOver = true;
+        saveCompletedGame();
         bannerEl.textContent = "💀 Game Over!";
     }
 }
@@ -312,18 +372,26 @@ boardEl.addEventListener("touchend", e => {
 
 // New Game
 
-newBtn.addEventListener("click", init);
+newBtn.addEventListener("click", showPlayerLogin);
 if (newBtnMobile) {
-    newBtnMobile.addEventListener("click", init);
+    newBtnMobile.addEventListener("click", showPlayerLogin);
 }
 
-if (window.PP && typeof PP.onUsernameChange === "function") {
-    PP.onUsernameChange(() => {
-        best = loadBest();
-        updateScore();
+if (playerLoginForm2048) {
+    playerLoginForm2048.addEventListener("submit", event => {
+        event.preventDefault();
+        startForPlayer(username2048.value);
+    });
+}
+if (profileForm2048) {
+    profileForm2048.addEventListener("submit", event => {
+        event.preventDefault();
+        startForPlayer(profileUsername2048.value);
     });
 }
 
 // Start
 
 init();
+renderScoreRecords();
+showPlayerLogin();

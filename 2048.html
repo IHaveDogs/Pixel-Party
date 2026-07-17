@@ -71,7 +71,6 @@
       </a>
       <div class="site-actions">
         <a class="back-link" href="index.html">Back to lobby</a>
-        <div id="auth-mount"></div>
       </div>
     </header>
 
@@ -108,19 +107,33 @@
           <p class="hint">Arrow keys to slide the blocks or swipe on the board. Matching tiles merge into higher values, and your best score saves by username.</p>
         </div>
 
-        <aside class="auth-panel">
-          <h2>Profile</h2>
-          <p class="hint">Enter a name once and this device keeps your best 2048 score tied to it.</p>
-          <p class="hint">Use the username box in the top bar, then come back here and keep stacking tiles.</p>
+        <aside class="auth-panel scores-panel">
+          <h2>Run Archive</h2>
+          <p>Player: <strong id="player-name">—</strong></p>
+          <form id="profile-form-2048" class="game-profile-form">
+            <label for="profile-username-2048">Player Name</label>
+            <input id="profile-username-2048" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+            <button class="ghost-button" type="submit">Save &amp; Start New Game</button>
+          </form>
+          <ol id="scores-2048" class="game-score-list"></ol>
+          <p id="empty-scores-2048" class="hint">No completed games yet.</p>
         </aside>
       </div>
     </main>
   </div>
 
+  <div id="player-login-2048" class="player-login">
+    <form id="player-login-form-2048" class="player-login-card">
+      <p class="login-kicker">IDENTIFICATION REQUIRED</p>
+      <h2>ENTER 2048</h2>
+      <p>Choose a player name. Every completed game is saved to this device.</p>
+      <label for="username-2048">PLAYER NAME</label>
+      <input id="username-2048" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+      <button class="pixel-button" type="submit">START GAME ↗</button>
+    </form>
+  </div>
+
   <script src="pixel-party.js"></script>
   <script src="2048.js"></script>
-  <script>
-    PP.mountAuthBar(document.getElementById('auth-mount'));
-  </script>
 </body>
 </html>

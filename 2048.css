@@ -272,6 +272,15 @@
 
 }
 
+.game-score-list{list-style:none;margin:12px 0 0;padding:0;counter-reset:rank}
+.game-score-list li{counter-increment:rank;display:grid;grid-template-columns:24px 1fr auto;gap:8px;padding:11px 0;border-bottom:1px solid var(--pp-border)}
+.game-score-list li::before{content:counter(rank,decimal-leading-zero);opacity:.5}
+.game-score-list small{display:block;opacity:.55;font-size:10px}.game-score-list b{color:var(--pp-accent)}
+.game-profile-form{display:grid;gap:8px;margin:14px 0}.game-profile-form label{font-size:12px;font-weight:800;text-transform:uppercase}.game-profile-form input{width:100%;padding:12px;background:#080c09;border:1px solid #3a493f;color:#fff}.game-profile-form button{width:100%;white-space:normal}
+.player-login{position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:20px;background:rgba(5,8,6,.94);backdrop-filter:blur(12px)}
+.player-login.hidden{display:none}.player-login-card{width:min(440px,100%);padding:36px;background:#101713;border:1px solid #39463d;box-shadow:0 35px 100px #000}
+.player-login-card label{display:block;margin:24px 0 8px;font-weight:800}.player-login-card input{width:100%;padding:14px;background:#080c09;border:1px solid #3a493f;color:#fff}.player-login-card button{width:100%;margin-top:12px}.login-kicker{color:var(--pp-accent);font-weight:800;letter-spacing:.14em;font-size:11px}
+
 /* ==========================
    D-Pad
    ========================== */

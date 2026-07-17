@@ -9,14 +9,18 @@ const BALL_SPEED = 12;        // was 7 -- marbles fly much faster now
 const BALL_RADIUS = 12;
 const LAUNCH_GAP = 5;         // frames between marbles in a volley stream
 const COLS = 8;               // 8 columns x 50px = 400px canvas width
-const MIN_BLOCKS = 6;
-const MAX_BLOCKS = 9;
+const MIN_BLOCKS = 3;
+const MAX_BLOCKS = 5;
 const BLOCK_SIZE = 45;
 const ROW_H = 50;
 const TOP_LIMIT = 100;        // blocks touching this line = game over
 const COLLECT_Y = 55;         // marbles above this (moving up) get collected
 const START_AMMO = 8;
 const BALL_TIMEOUT = 60 * 30; // failsafe: force-collect a marble after ~30s
+const MARBLE_DROP_RATE = 1;
+const BOMB_COST = 15;
+const MILLION_MARBLE_COST = 50;
+const MILLION_MARBLE_VALUE = 1048576; // 2^20; displays as 1M and still merges normally
 
 // ---------- State ----------
 let score = 0;
@@ -34,6 +38,8 @@ let gameIsOver = false;
 let isPaused = false;
 let isSpeedBoosted = false;
 let targetBlockCount = rollBlockTarget();
+let bombArmed = false;
+let player = "";
 
 const mouse = { x: 200, y: 400 };
 
@@ -46,6 +52,17 @@ const resetBtn = document.getElementById("resetBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const speedBtn = document.getElementById("speedBtn");
 const playAgainBtn = document.getElementById("playAgainBtn");
+const buyBombBtn = document.getElementById("buyBombBtn");
+const buyMillionBtn = document.getElementById("buyMillionBtn");
+const bombStatus = document.getElementById("bombStatus");
+const playerNameText = document.getElementById("playerName");
+const playerLogin = document.getElementById("playerLogin");
+const playerLoginForm = document.getElementById("playerLoginForm");
+const marbleUsername = document.getElementById("marbleUsername");
+const marbleScores = document.getElementById("marbleScores");
+const emptyMarbleScores = document.getElementById("emptyMarbleScores");
+const marbleProfileForm = document.getElementById("marbleProfileForm");
+const marbleProfileUsername = document.getElementById("marbleProfileUsername");
 
 if (window.PP) {
     PP.startCoinTimer({ rate: 2, isActive: () => !gameIsOver && !isPaused });
@@ -57,6 +74,57 @@ function bestStorageKey() {
     }
 
     return "marble-best:guest";
+}
+
+const MARBLE_RECORDS_KEY = "marble-boss-scores";
+
+function scoreRecords() {
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(MARBLE_RECORDS_KEY)) || []; }
+    catch { saved = []; }
+    const bestByPlayer = new Map();
+    for (const entry of Array.isArray(saved) ? saved : []) {
+        const name = String(entry.name || "PLAYER").trim().slice(0, 16) || "PLAYER";
+        const entryScore = Math.max(0, Number(entry.score) || 0);
+        const key = name.toLowerCase();
+        const current = bestByPlayer.get(key);
+        if (!current || entryScore > current.score) bestByPlayer.set(key, { name, score: entryScore, date: entry.date || "" });
+    }
+    return [...bestByPlayer.values()];
+}
+
+function renderScoreRecords() {
+    const records = scoreRecords().sort((a, b) => b.score - a.score).slice(0, 12);
+    marbleScores.innerHTML = records.map(record => `<li><span>${PP.escapeHtml(record.name)}<small>${PP.escapeHtml(record.date)}</small></span><b>${fmt(record.score)}</b></li>`).join("");
+    emptyMarbleScores.style.display = records.length ? "none" : "block";
+}
+
+function saveCompletedRun() {
+    if (!player) return;
+    const records = scoreRecords();
+    const index = records.findIndex(record => record.name.toLowerCase() === player.toLowerCase());
+    const run = { name: player, score, date: new Date().toLocaleDateString() };
+    if (index < 0) records.push(run);
+    else if (score > records[index].score) records[index] = run;
+    localStorage.setItem(MARBLE_RECORDS_KEY, JSON.stringify(records));
+    renderScoreRecords();
+}
+
+function showPlayerLogin() {
+    setPaused(true);
+    marbleUsername.value = player || (window.PP ? PP.currentUsername() : "");
+    playerLogin.classList.remove("hidden");
+    marbleUsername.focus();
+}
+
+function startForPlayer(name) {
+    player = String(name || "").trim().slice(0, 16) || "PLAYER";
+    if (window.PP) PP.setUsername(player);
+    playerNameText.textContent = player.toUpperCase();
+    marbleUsername.value = player;
+    marbleProfileUsername.value = player;
+    playerLogin.classList.add("hidden");
+    resetGame();
 }
 
 function loadBestScore() {
@@ -90,6 +158,43 @@ function updateHud() {
     scoreText.textContent = fmt(score);
     bestText.textContent = fmt(bestScore);
     waveText.textContent = String(wave);
+    updateBombShop();
+}
+
+function updateBombShop() {
+    if (!buyBombBtn || !bombStatus) return;
+    const coins = window.PP ? PP.coins() : 0;
+    bombStatus.textContent = bombArmed ? "Ready for next volley" : "Empty";
+    buyBombBtn.disabled = bombArmed;
+    buyBombBtn.textContent = bombArmed ? "💣 Bomb Ready!" : `💣 Blast Pass — ${BOMB_COST} Coins`;
+    if (buyMillionBtn) {
+        buyMillionBtn.disabled = false;
+        buyMillionBtn.textContent = `🚀 Million Marble — ${MILLION_MARBLE_COST} Coins`;
+    }
+}
+
+function buyBomb() {
+    if (bombArmed || !window.PP) return;
+    if (PP.coins() < BOMB_COST) {
+        setStatus(`You need ${BOMB_COST - PP.coins()} more coins for a bomb.`);
+        return;
+    }
+    PP.setCoins(PP.coins() - BOMB_COST);
+    bombArmed = true;
+    updateBombShop();
+    setStatus("Bomb armed! It will fire first in your next volley.");
+}
+
+function buyMillionMarble() {
+    if (!window.PP || PP.coins() < MILLION_MARBLE_COST) {
+        if (window.PP) setStatus(`You need ${MILLION_MARBLE_COST - PP.coins()} more coins for a Million Marble.`);
+        return;
+    }
+    PP.setCoins(PP.coins() - MILLION_MARBLE_COST);
+    ammo.unshift(MILLION_MARBLE_VALUE);
+    mergeAmmo();
+    updateBombShop();
+    setStatus("Million Marble added to the front of your next volley!");
 }
 
 function saveBestScore() {
@@ -139,7 +244,8 @@ function fireVolley() {
     if (gameIsOver || turnInProgress || ammo.length === 0 || isPaused) return;
 
     lockedDir = aimDirection();
-    pendingShots = ammo;
+    pendingShots = bombArmed ? ["bomb", ...ammo] : ammo;
+    bombArmed = false;
     ammo = [];
     turnInProgress = true;
     setStatus("Volley in motion.");
@@ -167,7 +273,7 @@ function trimNum(x) {
 
 // ---------- Ball ----------
 class Ball {
-    constructor(x, y, value, dx, dy) {
+    constructor(x, y, value, dx, dy, isBomb = false) {
         this.x = x;
         this.y = y;
         this.r = BALL_RADIUS;
@@ -177,6 +283,7 @@ class Ball {
         this.active = true;
         this.collected = false;
         this.age = 0;
+        this.isBomb = isBomb;
     }
 
     get color() {
@@ -184,6 +291,20 @@ class Ball {
     }
 
     draw() {
+        if (this.isBomb) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r + 2, 0, Math.PI * 2);
+            ctx.fillStyle = "#171717";
+            ctx.fill();
+            ctx.strokeStyle = "#ffb300";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = "white";
+            ctx.font = "14px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("💣", this.x, this.y + 5);
+            return;
+        }
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
@@ -221,7 +342,7 @@ class Ball {
         // back at the top and moving upward -> collected
         if ((this.y < COLLECT_Y && this.dy < 0) || this.age > BALL_TIMEOUT) {
             this.active = false;
-            fallingBalls.push(this);
+            if (!this.isBomb) fallingBalls.push(this);
         }
     }
 
@@ -240,6 +361,7 @@ class Block {
         this.targetY = y;   // blocks ease toward targetY when rows rise
         this.size = BLOCK_SIZE;
         this.hp = hp;
+        this.maxHp = hp;
     }
 
     draw() {
@@ -312,8 +434,8 @@ function aimDirection() {
 
 function setAimFromEvent(event) {
     const rect = canvas.getBoundingClientRect();
-    mouse.x = event.clientX - rect.left;
-    mouse.y = event.clientY - rect.top;
+    mouse.x = (event.clientX - rect.left) * canvas.width / rect.width;
+    mouse.y = (event.clientY - rect.top) * canvas.height / rect.height;
 }
 
 canvas.addEventListener("mousemove", event => {
@@ -382,17 +504,54 @@ function launchPending() {
     if (pendingShots.length === 0) return;
     if (frame % LAUNCH_GAP !== 0) return;
 
-    const value = pendingShots.shift();
+    const shot = pendingShots.shift();
+    const isBomb = shot === "bomb";
+    const value = isBomb ? 0 : shot;
     balls.push(new Ball(
         shooter.x,
         shooter.y + 24,
         value,
         lockedDir.dx * BALL_SPEED,
-        lockedDir.dy * BALL_SPEED
+        lockedDir.dy * BALL_SPEED,
+        isBomb
     ));
 }
 
 // ---------- Collisions ----------
+function dropMarbleFromBlock(block) {
+    // Drops grow alongside box health. Boxes around 1.5M health drop
+    // 524K marbles, allowing a matching pair to merge past 1M before
+    // 3M-health boxes become common.
+    const value = Math.pow(2, Math.floor(Math.log2(Math.max(4, block.maxHp / 2))));
+    balls.push(new Ball(
+        block.x + block.size / 2,
+        block.y + block.size / 2,
+        value,
+        (Math.random() - 0.5) * BALL_SPEED,
+        -BALL_SPEED * 0.6
+    ));
+}
+
+function explodeBomb(hitBlock, bomb) {
+    const inset = (ROW_H - BLOCK_SIZE) / 2;
+    const hitCol = Math.round((hitBlock.x - inset) / ROW_H);
+    const hitRow = blockRowIndex(hitBlock);
+    const exploded = blocks.filter(block => {
+        const col = Math.round((block.x - inset) / ROW_H);
+        const row = blockRowIndex(block);
+        return Math.abs(col - hitCol) <= 1 && Math.abs(row - hitRow) <= 1;
+    });
+
+    for (const block of exploded) {
+        addScore(block.hp);
+        dropMarbleFromBlock(block);
+    }
+    const explodedSet = new Set(exploded);
+    blocks = blocks.filter(block => !explodedSet.has(block));
+    bomb.active = false;
+    setStatus(`Boom! ${exploded.length} box${exploded.length === 1 ? "" : "es"} cleared.`);
+}
+
 function hitDetection() {
     for (const b of balls) {
         for (let i = blocks.length - 1; i >= 0; i--) {
@@ -404,6 +563,11 @@ function hitDetection() {
             const dx = b.x - cx;
             const dy = b.y - cy;
             if (dx * dx + dy * dy > b.r * b.r) continue;
+
+            if (b.isBomb) {
+                explodeBomb(bl, b);
+                break;
+            }
 
             // reflect off whichever face is closer, and push the ball out
             // so it can't register multiple hits on consecutive frames
@@ -421,14 +585,7 @@ function hitDetection() {
 
             if (bl.hp <= 0) {
                 blocks.splice(i, 1);
-                // broken block drops exactly ONE marble into play
-                balls.push(new Ball(
-                    bl.x + bl.size / 2,
-                    bl.y + bl.size / 2,
-                    Math.pow(2, Math.floor(Math.random() * 3)), // 1, 2, or 4
-                    (Math.random() - 0.5) * BALL_SPEED,
-                    -BALL_SPEED * 0.6
-                ));
+                if (Math.random() < MARBLE_DROP_RATE) dropMarbleFromBlock(bl);
             }
         }
     }
@@ -441,7 +598,7 @@ function mergeMarbles() {
             const a = balls[i];
             const b = balls[j];
 
-            if (!a.active || !b.active) continue;
+            if (!a.active || !b.active || a.isBomb || b.isBomb) continue;
             if (a.value !== b.value) continue;
 
             const dist = Math.hypot(a.x - b.x, a.y - b.y);
@@ -517,6 +674,7 @@ function checkGameOver() {
     for (const bl of blocks) {
         if (bl.targetY <= TOP_LIMIT) {
             gameIsOver = true;
+            saveCompletedRun();
             saveBestScore();
             gameOverBox.querySelector("h2").textContent = "Game Over - Wave " + wave;
             gameOverBox.classList.add("show");
@@ -566,13 +724,13 @@ function drawShooter() {
     const v = ammo[0];
     ctx.beginPath();
     ctx.arc(shooter.x, shooter.y, BALL_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = colorFor(v);
+    ctx.fillStyle = bombArmed ? "#171717" : colorFor(v);
     ctx.fill();
 
-    ctx.fillStyle = "black";
-    ctx.font = "bold 11px Arial";
+    ctx.fillStyle = bombArmed ? "white" : "black";
+    ctx.font = bombArmed ? "14px Arial" : "bold 11px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(fmt(v), shooter.x, shooter.y + 4);
+    ctx.fillText(bombArmed ? "💣" : fmt(v), shooter.x, shooter.y + 4);
 }
 
 // full inventory row along the top, in firing order (leftmost = first out)
@@ -583,8 +741,23 @@ function drawInventory() {
     const y = 16;
     const maxShown = 16;
 
-    for (let i = 0; i < Math.min(ammo.length, maxShown); i++) {
-        const x = startX + i * spacing;
+    if (bombArmed) {
+        ctx.beginPath();
+        ctx.arc(startX, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "#171717";
+        ctx.fill();
+        ctx.strokeStyle = "#ffb300";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = "white";
+        ctx.font = "10px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("💣", startX, y + 3);
+    }
+
+    const inventoryOffset = bombArmed ? 1 : 0;
+    for (let i = 0; i < Math.min(ammo.length, maxShown - inventoryOffset); i++) {
+        const x = startX + (i + inventoryOffset) * spacing;
 
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -592,7 +765,7 @@ function drawInventory() {
         ctx.fill();
 
         // highlight the marble that fires first
-        if (i === 0) {
+        if (i === 0 && !bombArmed) {
             ctx.strokeStyle = "white";
             ctx.lineWidth = 2;
             ctx.stroke();
@@ -656,6 +829,7 @@ function resetGame() {
     gameIsOver = false;
     isPaused = false;
     isSpeedBoosted = false;
+    bombArmed = false;
 
     scoreText.textContent = "0";
     gameOverBox.classList.remove("show");
@@ -676,9 +850,12 @@ function resetGame() {
     refillBlockField();
 }
 
-resetBtn.addEventListener("click", resetGame);
+resetBtn.addEventListener("click", showPlayerLogin);
 if (playAgainBtn) {
-    playAgainBtn.addEventListener("click", resetGame);
+    playAgainBtn.addEventListener("click", () => {
+        gameOverBox.classList.remove("show");
+        showPlayerLogin();
+    });
 }
 if (pauseBtn) {
     pauseBtn.addEventListener("click", () => setPaused(!isPaused));
@@ -693,11 +870,24 @@ if (speedBtn) {
     speedBtn.addEventListener("pointercancel", () => setSpeedBoost(false));
     speedBtn.addEventListener("lostpointercapture", () => setSpeedBoost(false));
 }
+if (buyBombBtn) {
+    buyBombBtn.addEventListener("click", buyBomb);
+}
+if (buyMillionBtn) {
+    buyMillionBtn.addEventListener("click", buyMillionMarble);
+}
+window.addEventListener("pp:coinschange", updateBombShop);
 
-if (window.PP && typeof PP.onUsernameChange === "function") {
-    PP.onUsernameChange(() => {
-        bestScore = loadBestScore();
-        updateHud();
+if (playerLoginForm) {
+    playerLoginForm.addEventListener("submit", event => {
+        event.preventDefault();
+        startForPlayer(marbleUsername.value);
+    });
+}
+if (marbleProfileForm) {
+    marbleProfileForm.addEventListener("submit", event => {
+        event.preventDefault();
+        startForPlayer(marbleProfileUsername.value);
     });
 }
 
@@ -748,5 +938,7 @@ function update() {
 }
 
 resetGame();
+renderScoreRecords();
+showPlayerLogin();
 updateHud();
 update();

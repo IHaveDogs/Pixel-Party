@@ -303,6 +303,7 @@
     ownedItems,
     ownedThemes,
     pixelTextEnabled,
+    setCoins,
     setUsername,
     startCoinTimer,
     storageKey

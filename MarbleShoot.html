@@ -19,7 +19,6 @@
             </a>
             <div class="site-actions">
                 <a class="back-link" href="index.html">Back to lobby</a>
-                <div id="auth-mount"></div>
             </div>
         </header>
 
@@ -30,6 +29,14 @@
                     <button id="pauseBtn" class="ghost-button" type="button">Pause</button>
                     <button id="speedBtn" class="ghost-button hold-button" type="button">Speed Up</button>
                     <button id="resetBtn" class="pixel-button" type="button">Reset</button>
+                </div>
+            </div>
+
+            <div class="bomb-shop" aria-label="Marble shop">
+                <p><strong>Bomb slot:</strong> <span id="bombStatus">Empty</span></p>
+                <div class="marble-shop-buttons">
+                    <button id="buyBombBtn" class="pixel-button" type="button">💣 Blast Pass — 15 Coins</button>
+                    <button id="buyMillionBtn" class="pixel-button" type="button">🚀 Million Marble — 50 Coins</button>
                 </div>
             </div>
 
@@ -45,12 +52,31 @@
                 </section>
 
                 <aside class="scores-panel">
-                    <h2>Session</h2>
+                    <h2>Run Archive</h2>
+                    <p>Player: <strong id="playerName">—</strong></p>
+                    <form id="marbleProfileForm" class="game-profile-form">
+                        <label for="marbleProfileUsername">Player Name</label>
+                        <input id="marbleProfileUsername" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+                        <button class="ghost-button" type="submit">Save &amp; Start New Run</button>
+                    </form>
                     <p id="statusText">Ready to launch.</p>
+                    <ol id="marbleScores" class="game-score-list"></ol>
+                    <p id="emptyMarbleScores" class="hint">No completed runs yet.</p>
                     <p class="hint">Marbles collect, merge, and keep adding up. Your best score saves under your username on this device.</p>
                 </aside>
             </div>
         </main>
+    </div>
+
+    <div id="playerLogin" class="player-login">
+        <form id="playerLoginForm" class="player-login-card">
+            <p class="login-kicker">IDENTIFICATION REQUIRED</p>
+            <h2>ENTER MARBLE BOSS</h2>
+            <p>Choose a player name. Every completed run is saved to this device.</p>
+            <label for="marbleUsername">PLAYER NAME</label>
+            <input id="marbleUsername" maxlength="16" autocomplete="nickname" placeholder="TYPE YOUR NAME" required>
+            <button class="pixel-button" type="submit">START RUN ↗</button>
+        </form>
     </div>
 
     <div id="gameOver">
@@ -60,9 +86,5 @@
 
     <script src="pixel-party.js"></script>
     <script src="Marble.js"></script>
-    <script>
-        PP.mountAuthBar(document.getElementById("auth-mount"));
-    </script>
-
 </body>
 </html>
